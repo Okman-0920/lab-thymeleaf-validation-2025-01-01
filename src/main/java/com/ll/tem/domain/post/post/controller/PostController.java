@@ -65,11 +65,11 @@ public class PostController {
 
     // 다른곳에서 이거 사용 못하게 private
     private record PostWriteForm(
-            @NotBlank(message = "01-제목을 입력해주세요.")
-            @Length(min = 2, message = "02-제목을 5자 이상 입력해주세요.")
+            @NotBlank(message = "제목을 입력해주세요.")
+            @Length(min = 2, message = "제목을 5자 이상 입력해주세요.")
             String title,
-            @NotBlank(message = "03-내용을 입력해주세요.")
-            @Length(min = 2, message = "04-내용을 10자 이상 입력해주세요.")
+            @NotBlank(message = "내용을 입력해주세요.")
+            @Length(min = 2, message = "내용을 10자 이상 입력해주세요.")
             String content
     ) { }
 
@@ -91,9 +91,9 @@ public class PostController {
             // 암기: 사용자가 입력한 데이터를 보관
     ) {
 
-        // 암기: 스트림으로 에러메시지는 아래와 같이 표현
+
         if (bindingResult.hasErrors()) {
-            String errorMessage = bindingResult.getAllErrors()
+        /* String errorMessage = bindingResult.getAllErrors()
                     .stream()
                     .map(error -> error.getDefaultMessage())
                     .sorted()
@@ -105,9 +105,7 @@ public class PostController {
                     .collect(Collectors.joining("<br>"));
 
             model.addAttribute("errorMessage", errorMessage);
-            model.addAttribute("title", form.title);
-            model.addAttribute("content", form.content);
-
+            */// 암기: 스트림으로 에러메시지 표현
             return "domain/post/post/write";
 
         }

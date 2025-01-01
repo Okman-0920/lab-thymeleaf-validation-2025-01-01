@@ -1,12 +1,12 @@
 package com.ll.tem.domain.post.post;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping("/posts")
-@Validated
 public class PostController {
     private String getFormHtml(String errorMessage, String title, String content) {
         return """
@@ -50,7 +49,8 @@ public class PostController {
 
     @PostMapping("/write")
     @ResponseBody
-    public String write(PostWriteForm form) {
+    public String write(
+            @Valid PostWriteForm form) {
         System.out.println("form = " + form);
 
         return """

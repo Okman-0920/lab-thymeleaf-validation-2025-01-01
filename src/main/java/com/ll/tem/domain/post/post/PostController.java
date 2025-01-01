@@ -10,63 +10,40 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/posts")
 @RequiredArgsConstructor
 public class PostController {
-
-    @GetMapping
-    public String showWrite() {
+    private String getFormHtml(String errorMessage, String title, String content) {
         return """
                 <div>%s<div>
                 <form method="POST">
-                    <input type="text" name="title" placeholder="제목">
-                    <textarea name="content" placeholder="내용"></textarea>
+                    <input type="text" name="title" placeholder="제목" value="%s">
+                    <br>
+                    <textarea name="content" placeholder="내용">%s</textarea>
+                    <br>
                     <button type="submit">글쓰기</button>
                 </form>
-                """;
+                """.formatted(errorMessage, title, content);
+    }
+
+    @GetMapping
+    public String showWrite() {
+        return getFormHtml("","","");
     }
 
     @PostMapping("/write")
     public String write(String title, String content) {
         if (title == null || title.isBlank()) {
-            return """
-                <div>%s<div>
-                <form method="POST">
-                    <input type="text" name="title" placeholder="제목">
-                    <textarea name="content" placeholder="내용"></textarea>
-                    <button type="submit">글쓰기</button>
-                </form>
-                """.formatted("제목을 입력하세요.");
+            return getFormHtml("제목을 입력하세요",title,content);
         }
 
         if (title.length() < 5) {
-            return """
-                <div>%s<div>
-                <form method="POST">
-                    <input type="text" name="title" placeholder="제목" value="%s">
-                    <textarea name="content" placeholder="내용"></textarea>
-                    <button type="submit">글쓰기</button>
-                </form>
-                """.formatted("제목을 5자 이상 입력하세요.", title);
+            return getFormHtml("제목을 5자 이상 입력하세요.", title, content);
         }
 
         if (content == null || content.isBlank()) {
-            return """
-                <div>%s<div>
-                <form method="POST">
-                    <input type="text" name="title" placeholder="제목" value="%s">
-                    <textarea name="content" placeholder="내용"></textarea>
-                    <button type="submit">글쓰기</button>
-                </form>
-                """.formatted("내용을 입력하세요", title);
+            return getFormHtml("내용을 입력하세요", title, content);
         }
 
         if (content.length() < 10) {
-            return """
-                <div>%s<div>
-                <form method="POST">
-                    <input type="text" name="title" placeholder="제목" value="%s">
-                    <textarea name="content" placeholder="내용">%s</textarea>
-                    <button type="submit">글쓰기</button>
-                </form>
-                """.formatted("내용을 10자 이상 입력하세요.", title, content);
+            return getFormHtml("내용을 10자 이상 입력하세요.", title, content);
         }
 
         return """

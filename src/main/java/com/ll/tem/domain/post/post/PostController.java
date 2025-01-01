@@ -1,14 +1,17 @@
 package com.ll.tem.domain.post.post;
 
-import lombok.RequiredArgsConstructor;
+import jakarta.validation.constraints.NotBlank;
+import org.hibernate.validator.constraints.Length;
+import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-@RestController
+@Controller
 @RequestMapping("/posts")
-@RequiredArgsConstructor
+@Validated
 public class PostController {
     private String getFormHtml(String errorMessage, String title, String content) {
         return """
@@ -23,30 +26,18 @@ public class PostController {
                 """.formatted(errorMessage, title, content);
     }
 
-    @GetMapping
+    @GetMapping("/write")
+    @ResponseBody
     public String showWrite() {
         return getFormHtml("","","");
     }
 
     @PostMapping("/write")
-    public String write(String title, String content) {
-        if (title == null || title.isBlank()) {
-            return getFormHtml("제목을 입력하세요",title,content);
-        }
-
-        if (title.length() < 5) {
-            return getFormHtml("제목을 5자 이상 입력하세요.", title, content);
-        }
-
-        if (content == null || content.isBlank()) {
-            return getFormHtml("내용을 입력하세요", title, content);
-        }
-
-        if (content.length() < 10) {
-            return getFormHtml("내용을 10자 이상 입력하세요.", title, content);
-        }
-
-        return """
+    @ResponseBody
+    public String write(
+            @NotBlank @Length(min = 5) String title,
+            @NotBlank @Length(min = 10) String content
+    ) { return """
                 <h1> 글쓰기 완료 </h1>
                 <div>
                     <h2>%s</h2>

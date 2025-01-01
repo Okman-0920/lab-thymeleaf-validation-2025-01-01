@@ -51,6 +51,12 @@ public class PostController {
     @PostMapping("/write")
     @ResponseBody
     public String write(@Valid PostWriteForm form, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return getFormHtml(
+                    bindingResult.getFieldError().getDefaultMessage(),
+                    form.getTitle(),
+                    form.getContent());
+        }
         return """
                 <h1> 글쓰기 완료 </h1>
                 <div>

@@ -7,11 +7,13 @@ import org.hibernate.validator.constraints.Length;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/posts")
@@ -40,9 +42,10 @@ public class PostController {
     }};
 
     @GetMapping
-    @ResponseBody
-    public String showList() {
-        String ul = "<ul>" + posts
+//  @ResponseBody // list.html 사용 전
+    public String showList(Model model) {
+        model.addAttribute("posts", posts.reversed());
+/*        String ul = "<ul>" + posts
                 .reversed()
                 .stream()
                 .map(post -> "<li>%s</li>".formatted(post.getTitle()))
@@ -59,7 +62,8 @@ public class PostController {
         // ol(ordered list): 순서가 중요한 목록
         // li(list item): 목록 안의 요소들
 
-        return body;
+        return body;*/// list.html 사용 전
+        return "domain/post/post/list";
     }
 
 

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.Comparator;
 import java.util.stream.Collectors;
 
 @Controller
@@ -54,10 +55,10 @@ public class PostController {
     @ResponseBody
     public String write(@Valid PostWriteForm form, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            String errorMessage = bindingResult
-                    .getAllErrors()
+            String errorMessage = bindingResult.getAllErrors()
                     .stream()
                     .map(error -> error.getDefaultMessage())
+                    .sorted(Comparator.reverseOrder()) // 알파벳 순서로 역순
                     .collect(Collectors.joining("<br>"));
 
             return getFormHtml(

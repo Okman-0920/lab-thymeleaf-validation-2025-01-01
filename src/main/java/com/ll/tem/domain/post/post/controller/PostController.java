@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -77,9 +78,31 @@ public class PostController {
     }
 
     @PostMapping("/write")
-    public String write(@Valid PostWriteForm form, BindingResult bindingResult) {
+    public String write(
+            @Valid PostWriteForm form,
+            BindingResult bindingResult,
+            // 암기: 사용자의 입력값에 대한 결과를 보관
+            Model model
+            // 암기: 사용자가 입력한 데이터를 보관
+    ) {
+
+        // 암기: 스트림으로 에러메시지는 아래와 같이 표현
         if (bindingResult.hasErrors()) {
+            String errorMessage = bindingResult.getAllErrors()
+                    .stream()
+                    .map(error -> error.getDefaultMessage())
+                    .sorted()
+                    .map(message -> message.split("-", 2)[1])
+                    // split: 문자열을 특정 구분자로 나누어 배열로 반환 (기준으로 반으로 쪼갠다는 의미)
+                    // "-" : - 를 구분자로 지정
+                    // 2 : - 구분자를 기준으로 2개로 나눈다는 의미
+                    // 1 : - 그중 1번째 내용을 출력 (배열은 0부터 시작이어서 1임)
+                    .collect(Collectors.joining("<br>"));
+
+            model.addAttribute("errorMessage", errorMessage);
+
             return "domain/post/post/write";
+
         }
         posts.add(
                 Post.builder()

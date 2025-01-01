@@ -7,10 +7,7 @@ import org.hibernate.validator.constraints.Length;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,6 +65,21 @@ public class PostController {
         return "domain/post/post/list";
     }
 
+    @GetMapping("{id}")
+//  @ResponseBody // list.html 사용 전
+    public String showDetail(Model model, @PathVariable long id) {
+        Post post = posts
+                .stream()
+                        .filter(p -> p.getId() == id)
+                        .findFirst()
+                        .orElseThrow();
+                        // 조건에 맞는 id 찾아서 없으면 오류를 해라
+
+        model.addAttribute("post", post);
+        // 글 하나 보여주니까 post (맥락으로 선택한 내용임)
+
+        return "domain/post/post/detail";
+    }
 
     // 다른곳에서 이거 사용 못하게 private
     private record PostWriteForm(

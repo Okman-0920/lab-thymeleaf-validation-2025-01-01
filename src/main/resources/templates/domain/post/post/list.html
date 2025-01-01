@@ -1,9 +1,12 @@
 <h1>글 목록</h1>
 <ul>
     <li th:each="post : ${posts}">
-        <span th:text="${post.id}"></span>
-        :
-        <span th:text="${post.title}"></span>
+        <a th:href="|/posts/${post.id}|">
+            <!-- text와 타임리프 변수를 혼합해서 사용하면 오류나니 || 사용 -->
+            <span th:text="${post.id}"></span>
+            :
+            <span th:text="${post.title}"></span>
+        </a>
     </li>
 </ul>
 <a href="/posts/write">글 쓰기</a>

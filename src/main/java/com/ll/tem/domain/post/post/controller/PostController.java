@@ -7,10 +7,7 @@ import org.hibernate.validator.constraints.Length;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,6 +55,9 @@ public class PostController {
                 
                 <a href="/posts/write">글쓰기</a>
                 """.formatted(ul);
+        // ul(unordered list): 순서가 중요하지 않은 목록
+        // ol(ordered list): 순서가 중요한 목록
+        // li(list item): 목록 안의 요소들
 
         return body;
     }
@@ -67,6 +67,7 @@ public class PostController {
         return "domain/post/post/write";
     }
 
+    // 다른곳에서 이거 사용 못하게 private
     private record PostWriteForm(
             @NotBlank(message = "01-제목을 입력해주세요.")
             @Length(min = 5, message = "02-제목을 5자 이상 입력해주세요.")
@@ -79,7 +80,9 @@ public class PostController {
 
     @PostMapping("/write")
     public String write(
-            @Valid PostWriteForm form,
+            @ModelAttribute("form") @Valid PostWriteForm form,
+            // 암기: @Model~ : 요청 데이터를 Java객체로 변환하는 어노테이션
+            // 암기: 위처럼 하면 타임리프 form이라는 변수로 가능함
             BindingResult bindingResult,
             // 암기: 사용자의 입력값에 대한 결과를 보관
             Model model

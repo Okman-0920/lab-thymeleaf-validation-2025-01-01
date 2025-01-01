@@ -2,9 +2,6 @@ package com.ll.tem.domain.post.post;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.ToString;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -13,7 +10,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.Comparator;
 import java.util.stream.Collectors;
 
 @Controller
@@ -32,24 +28,42 @@ public class PostController {
                 """.formatted(errorMessage, title, content);
     }
 
+    @GetMapping
+    @ResponseBody
+    public String showList() {
+        String head = "<h1>글 목록</h1>";
+
+        String body = """
+                <ul> 
+                    <li>글 3</li>
+                    <li>글 2</li>
+                    <li>글 1</li>
+                </ul>
+                
+                <a href="/post/write">글쓰기</a>
+                """;
+        // ul(unordered list): 순서가 중요하지 않은 목록
+        // ol(ordered list): 순서가 중요한 목록
+        // li(list item): 목록 안의 요소들
+
+        return body;
+    }
+
     @GetMapping("/write")
     @ResponseBody
     public String showWrite() {
         return getFormHtml("","","");
     }
 
-    @AllArgsConstructor
-    @Getter
-    @ToString
-    public static class PostWriteForm {
-        @NotBlank(message = "제목을 입력해주세요.")
-        @Length(min = 5, message = "제목을 5자이상 입력해주세요")
-        private String title;
-
-        @NotBlank(message = "내용을 입력해주세요")
-        @Length(min = 10, message = "내용을 10자이상 입력해주세요")
-        private String content;
-    }
+    // 다른곳에서 이거 사용 못하게 private
+    private record PostWriteForm (
+            @NotBlank(message = "01-제목을 입력해주세요.")
+            @Length(min = 5, message = "02-제목을 5자이상 입력해주세요")
+            String title,
+            @NotBlank(message = "03-내용을 입력해주세요")
+            @Length(min = 10, message = "04-내용을 10자이상 입력해주세요")
+            String content
+    ) {}
 
     @PostMapping("/write")
     @ResponseBody
@@ -58,13 +72,18 @@ public class PostController {
             String errorMessage = bindingResult.getAllErrors()
                     .stream()
                     .map(error -> error.getDefaultMessage())
-                    .sorted(Comparator.reverseOrder()) // 알파벳 순서로 역순
+                    .sorted()
+                    .map(message -> message.split("-", 2)[1])
+                    // split: 문자열을 특정 구분자로 나누어 배열로 반환 (기준으로 반으로 쪼갠다는 의미)
+                    // "-" : - 를 구분자로 지정
+                    // 2 : - 구분자를 기준으로 2개로 나눈다는 의미
+                    // 1 : - 그중 1번째 내용을 출력 (배열은 0부터 시작이어서 1임)
                     .collect(Collectors.joining("<br>"));
 
             return getFormHtml(
                     errorMessage,
-                    form.getTitle(),
-                    form.getContent());
+                    form.title(),
+                    form.content());
         }
         return """
                 <h1> 글쓰기 완료 </h1>
@@ -72,6 +91,6 @@ public class PostController {
                     <h2>%s</h2>
                     <p>%s</p>
                 </div>
-                """.formatted(form.getTitle(), form.getContent());
+                """.formatted(form.title(), form.content());
     }
 }

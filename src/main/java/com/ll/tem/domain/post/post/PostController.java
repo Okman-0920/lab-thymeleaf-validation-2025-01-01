@@ -14,6 +14,7 @@ public class PostController {
     @GetMapping
     public String showWrite() {
         return """
+                <div>%s<div>
                 <form method="POST">
                     <input type="text" name="title" placeholder="제목">
                     <textarea name="content" placeholder="내용"></textarea>
@@ -24,6 +25,49 @@ public class PostController {
 
     @PostMapping("/write")
     public String write(String title, String content) {
+        if (title == null || title.isBlank()) {
+            return """
+                <div>%s<div>
+                <form method="POST">
+                    <input type="text" name="title" placeholder="제목">
+                    <textarea name="content" placeholder="내용"></textarea>
+                    <button type="submit">글쓰기</button>
+                </form>
+                """.formatted("제목을 입력하세요.");
+        }
+
+        if (title.length() < 5) {
+            return """
+                <div>%s<div>
+                <form method="POST">
+                    <input type="text" name="title" placeholder="제목" value="%s">
+                    <textarea name="content" placeholder="내용"></textarea>
+                    <button type="submit">글쓰기</button>
+                </form>
+                """.formatted("제목을 5자 이상 입력하세요.", title);
+        }
+
+        if (content == null || content.isBlank()) {
+            return """
+                <div>%s<div>
+                <form method="POST">
+                    <input type="text" name="title" placeholder="제목" value="%s">
+                    <textarea name="content" placeholder="내용"></textarea>
+                    <button type="submit">글쓰기</button>
+                </form>
+                """.formatted("내용을 입력하세요", title);
+        }
+
+        if (content.length() < 10) {
+            return """
+                <div>%s<div>
+                <form method="POST">
+                    <input type="text" name="title" placeholder="제목" value="%s">
+                    <textarea name="content" placeholder="내용">%s</textarea>
+                    <button type="submit">글쓰기</button>
+                </form>
+                """.formatted("내용을 10자 이상 입력하세요.", title, content);
+        }
 
         return """
                 <h1> 글쓰기 완료 </h1>

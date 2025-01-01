@@ -45,6 +45,8 @@ public class PostController {
 //  @ResponseBody // list.html 사용 전
     public String showList(Model model) {
         model.addAttribute("posts", posts.reversed());
+        // posts: 타임리프가 사용할 객체 (List<Post> 객체임
+        // "posts": 타임리프에서 사용할 객체 명
 /*        String ul = "<ul>" + posts
                 .reversed()
                 .stream()

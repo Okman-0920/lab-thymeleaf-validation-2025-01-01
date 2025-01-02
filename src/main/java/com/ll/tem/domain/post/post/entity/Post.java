@@ -18,3 +18,5 @@ public class Post extends BaseTime {
     @Column(columnDefinition = "TEXT")
     private String content;
 }
+
+// 저는 날짜 변경코드없는데..

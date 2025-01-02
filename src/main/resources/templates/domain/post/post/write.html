@@ -3,10 +3,9 @@
 <form method="POST" th:object="${postWriteForm}">
     <div th:if="${#fields.hasAnyErrors()}">
         <div th:each="err : ${#fields.allErrors().stream().sorted()}" th:text="${err.split('-', 2)[1]}"/>
+    </div>
         <!-- 암기: 오류 출력 코드 // err: 보여준다 -->
         <!-- 암기: 타임리프에서 자바 문법이좀 일부 먹힌다 -->
-    </div>
-
     <label for="title">제목</label>
     <!-- 괄호는 id 값 -->
     <input type="text" placeholder="제목을 입력해주세요" th:field="*{title}">

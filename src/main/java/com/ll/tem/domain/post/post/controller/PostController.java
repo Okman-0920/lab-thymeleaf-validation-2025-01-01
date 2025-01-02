@@ -1,80 +1,34 @@
 package com.ll.tem.domain.post.post.controller;
 
 import com.ll.tem.domain.post.post.entity.Post;
+import com.ll.tem.domain.post.post.repository.PostService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller
 @RequestMapping("/posts")
+@RequiredArgsConstructor
 public class PostController {
-    private List<Post> posts = new ArrayList<>() {{
-        add(
-                Post.builder()
-                        .title("제목1")
-                        .content("내용1")
-                        .build()
-        );
+    private final PostService postService;
 
-        add(
-                Post.builder()
-                        .title("제목2")
-                        .content("내용2")
-                        .build()
-        );
+    public String showList(Model model){
+        List<Post> posts = postService.findAllByOrderByIdDesc();
+        model.addAttribute("posts", posts);
 
-        add(
-                Post.builder()
-                        .title("제목3")
-                        .content("내용3")
-                        .build()
-        );
-    }};
-
-    @GetMapping
-//  @ResponseBody // list.html 사용 전
-    public String showList(Model model) {
-        model.addAttribute("posts", posts.reversed());
-        // posts: 타임리프가 사용할 객체 (List<Post> 객체임
-        // "posts": 타임리프에서 사용할 객체 명
-/*        String ul = "<ul>" + posts
-                .reversed()
-                .stream()
-                .map(post -> "<li>%s</li>".formatted(post.getTitle()))
-                .collect(Collectors.joining()) + "</ul>";
-
-        String body = """
-                <h1>글 목록</h1>
-                
-                %s
-                
-                <a href="/posts/write">글쓰기</a>
-                """.formatted(ul);
-        // ul(unordered list): 순서가 중요하지 않은 목록
-        // ol(ordered list): 순서가 중요한 목록
-        // li(list item): 목록 안의 요소들
-
-        return body;*/// list.html 사용 전
         return "domain/post/post/list";
     }
 
     @GetMapping("{id}")
-//  @ResponseBody // list.html 사용 전
     public String showDetail(Model model, @PathVariable long id) {
-        Post post = posts
-                .stream()
-                        .filter(p -> p.getId() == id)
-                        .findFirst()
-                        .orElseThrow();
-                        // 조건에 맞는 id 찾아서 없으면 오류를 해라
-
+        Post post = postService.findById(id).get();
         model.addAttribute("post", post);
         // 글 하나 보여주니까 post (맥락으로 선택한 내용임)
 
@@ -108,31 +62,11 @@ public class PostController {
             Model model
             // 암기: 사용자가 입력한 데이터를 보관
     ) {
-
-
         if (bindingResult.hasErrors()) {
-        /* String errorMessage = bindingResult.getAllErrors()
-                    .stream()
-                    .map(error -> error.getDefaultMessage())
-                    .sorted()
-                    .map(message -> message.split("-", 2)[1])
-                    // split: 문자열을 특정 구분자로 나누어 배열로 반환 (기준으로 반으로 쪼갠다는 의미)
-                    // "-" : - 를 구분자로 지정
-                    // 2 : - 구분자를 기준으로 2개로 나눈다는 의미
-                    // 1 : - 그중 1번째 내용을 출력 (배열은 0부터 시작이어서 1임)
-                    .collect(Collectors.joining("<br>"));
-
-            model.addAttribute("errorMessage", errorMessage);
-            */// 암기: 스트림으로 에러메시지 표현
             return "domain/post/post/write";
 
         }
-        posts.add(
-                Post.builder()
-                        .title(form.title)
-                        .content(form.content)
-                        .build()
-        );
+        postService.write(form.title, form.content);
 
         return "redirect:/posts";
     }

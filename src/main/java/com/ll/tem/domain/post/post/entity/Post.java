@@ -1,17 +1,20 @@
 package com.ll.tem.domain.post.post.entity;
 
-import lombok.Builder;
-import lombok.Getter;
+import com.ll.tem.global.jpa.entity.BaseTime;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import lombok.*;
 
-@Builder
+@Entity
 @Getter
-public class Post {
-    private static long lastId;
-
-    @Builder.Default
-    private Long Id = ++lastId;
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+public class Post extends BaseTime {
+    @Column(length = 100)
     private String title;
+
+    @Column(columnDefinition = "TEXT")
     private String content;
-
 }
-
